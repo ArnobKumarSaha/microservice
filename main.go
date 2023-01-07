@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"github.com/Arnobkumarsaha/microservice/handlers"
 	"log"
 	"net/http"
@@ -10,19 +11,22 @@ import (
 	"time"
 )
 
+var bindAddr string
+
+func init()  {
+	flag.StringVar(&bindAddr, "BIND_ADDR", ":9090", "usage")
+}
+
 func main() {
 	lg := log.New(os.Stdout, "my-simple-api", log.LstdFlags)
 	mux := http.NewServeMux()
 
-	helloHandler := handlers.NewHello(lg)
-	mux.Handle("/", helloHandler)
-
-	goodbyeHandler := handlers.NewGoodbye(lg)
-	mux.Handle("/bye", goodbyeHandler)
+	productHandler := handlers.NewProducts(lg)
+	mux.Handle("/", productHandler)
 
 
 	server := http.Server{
-		Addr:              ":9090",
+		Addr:              bindAddr,
 		Handler:           mux,
 		ReadTimeout:       time.Second * 10,
 		WriteTimeout:      time.Second * 10,
